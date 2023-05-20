@@ -15,7 +15,9 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::all(); //fetch all blog posts from DB
-	    return $posts; //returns the fetched posts
+        return view('blog.index', [
+                'posts' => $posts,
+            ]); //returns the view with posts
     }
 
     /**
@@ -25,7 +27,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('blog.create');
     }
 
     /**
@@ -36,7 +38,13 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $newPost = Post::create([
+            'title' => $request->title,
+            'body' => $request->body,
+            'user_id' => 1,
+        ]);
+
+        return redirect('blog/' . $newPost->id);
     }
 
     /**
@@ -47,7 +55,11 @@ class PostController extends Controller
      */
     public function show(Post $blogPost)
     {
-        return $blogPost; //returns the fetched posts
+        // return $blogPost; //returns the fetched posts
+
+        return view('blog.show', [
+            'post' => $blogPost,
+        ]); //retur
     }
 
     /**
@@ -56,9 +68,11 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Post $id)
+    public function edit(Post $blogPost)
     {
-        //
+        return view('blog.edit', [
+            'post' => $blogPost,
+            ]); //returns the edit view with the post
     }
 
     /**
@@ -68,9 +82,14 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $id)
+    public function update(Request $request, Post $blogPost)
     {
-        //
+        $blogPost->update([
+            'title' => $request->title,
+            'body' => $request->body
+        ]);
+
+        return redirect('blog/' . $blogPost->id);
     }
 
     /**
@@ -79,8 +98,10 @@ class PostController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Post $id)
+    public function destroy(Post $blogPost)
     {
-        //
+        $blogPost->delete();
+
+        return redirect('/blog');
     }
 }
