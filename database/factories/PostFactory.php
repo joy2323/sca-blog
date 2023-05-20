@@ -15,9 +15,10 @@ class PostFactory extends Factory
     public function definition()
     {
         return [
-            'title' => faker()->sentence, //Generates a fake sentence
-            'body' => faker()->paragraph(), //generates fake 30 paragraphs
-            'user_id' => User::factory() //Generates a User from factory and extracts id
+            'title' => $this->faker->sentence, //Generates a fake sentence
+            'body' => $this->faker->paragraph(15), //generates fake 30 paragraphs
+            'user_id' => User::factory()->create()->id,
+            //Generates a User from factory and extracts id
 
         ];
     }
