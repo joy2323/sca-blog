@@ -4,10 +4,9 @@ SCA BLOG Service
 REQUIREMENTS
 ------------
 
-- PHP 8.1
+- PHP 8.0
 - MySQL 8.0
 - Composer 2.0
-- Redis 6.2
 - Node.js 14.16.1
 
 Installation
