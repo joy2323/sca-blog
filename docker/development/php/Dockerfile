@@ -44,22 +44,12 @@ RUN pecl install -o -f redis \
 ADD ./composer.sh ./
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-
-# Install Node.js
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - \
-    && DEBIAN_FRONTEND=noninteractive apt-get install nodejs --no-install-recommends -yqq
-RUN usermod -u $HOST_UID www-data && groupmod -g $HOST_UID www-data && chsh -s /bin/bash www-data
-
 # Copy bash_aliases
 COPY ./.bashrc /root/.bashrc
 RUN cp /root/.bashrc /var/www
 
 # use custom php.ini file
 COPY php.ini /usr/local/etc/php/conf.d/custom.ini
-
-# Add cron job configuration
-COPY sca_blog_crontab.sh /var/www/sca_blog_crontab.sh
-RUN chmod +x /var/www/sca_blog_crontab.sh
 
 #configure supervisor
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf

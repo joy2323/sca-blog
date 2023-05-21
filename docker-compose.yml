@@ -1,22 +1,5 @@
 version: "3.8"
 services:
-  app:
-    build:
-      context: ./
-      dockerfile: Dockerfile
-    image: gdd/laravel
-    container_name: scaBlog_app
-    restart: unless-stopped
-    tty: true
-    environment:
-      SERVICE_NAME: sca_blog
-      SERVICE_TAGS: dev
-    working_dir: /var/www/html
-    volumes:
-      - ./:/var/www/html
-    networks:
-      - scaBlog
-  
   ngnix:
     container_name: scaBlog_nginx
     build:
