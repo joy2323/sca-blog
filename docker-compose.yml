@@ -1,0 +1,83 @@
+version: "3.8"
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    image: gdd/laravel
+    container_name: scaBlog_app
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: sca_blog
+      SERVICE_TAGS: dev
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - scaBlog
+  
+  ngnix:
+    container_name: scaBlog_nginx
+    build:
+      context: ./docker/development/nginx
+      args:
+        HOST_UID: ${HOST_UID}
+    ports:
+      - "${SSL_PORT:-443}:443"
+      - "${HTTP_PORT:-80}:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/development/nginx/site.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php
+    networks:
+      - scaBlog
+    extra_hosts:
+      - "scaBlog-laravel.test:host-gateway"
+      - "host.docker.internal:host-gateway" # connect to service outside container
+
+  php:
+    container_name: scaBlog_php
+    build:
+        context: ./docker/development/php
+        args:
+            HOST_UID: ${HOST_UID}
+    env_file:
+        - .env
+    volumes:
+        - ./:/var/www/html
+    depends_on:
+        - db
+    extra_hosts:
+        - "host.docker.internal:host-gateway"
+    networks:
+        - scaBlog
+
+  db:
+    container_name: scaBlog_db
+    build:
+      context: ./docker/development/mysql
+      args:
+        HOST_UID: ${HOST_UID}
+    restart: always
+    volumes:
+      - ./docker/development/runtime/mysql:/var/lib/mysqld
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD:-root}"
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_DATABASE: sca_blog
+      MYSQL_USER: docker
+      MYSQL_PASSWORD: secret
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}"]
+      retries: 3
+      timeout: 5s
+  
+networks:
+  scaBlog:
+    external: true
+
