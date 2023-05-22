@@ -49,6 +49,8 @@ docker-compose exec php bash
 
 8. App will be available on http://scablog-backend.test:9880 url
 
+9. Docker Registry Url:  https://hub.docker.com/r/oluebubechukwu/sca-blog/tags
+
 Useful tips
 ===========
 
