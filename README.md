@@ -20,6 +20,7 @@ Installation
 
 ```sh 
 cp .env.example .env
+composer install
 ```
 
 3. Create docker network
